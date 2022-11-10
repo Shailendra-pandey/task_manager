@@ -1,8 +1,6 @@
-import Sequelize from 'sequelize';
-import sequelize from '../model';
 import User from '../model/user.model';
-import JwtService from '../service/JwtService';
 import bcrypt from 'bcrypt';
+import Profile from '../model/profile.model'
 
 const loginValidate = async (req, res, next) => {
 
@@ -11,7 +9,11 @@ const loginValidate = async (req, res, next) => {
     const role = req.body.role;
 
     try {
-        const user = await User.findOne({ where: { email: email } })
+        const user = await User.findOne({ where: { email: email } }, { include: Profile })
+
+        const userProfile = await User.findByPk(user.dataValues.id, { include: Profile })
+
+        delete userProfile.password;
 
         if (!user) {
             res.send("email is incorrect");
@@ -19,7 +21,7 @@ const loginValidate = async (req, res, next) => {
         }
 
         const match = await bcrypt.compare(password, user.password)
-        
+
         if (!match) {
             res.send("password is incorrect");
             return;
@@ -29,11 +31,8 @@ const loginValidate = async (req, res, next) => {
             res.send("role is incorrect")
             return;
         }
-        
-        // const token = JwtService.sign({ id: user.id })
-        // res.send(token)
 
-        req.role = role;
+        req.user = userProfile;
         next();
 
     } catch (error) {

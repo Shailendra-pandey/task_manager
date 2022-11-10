@@ -18,32 +18,36 @@ const signup = async (req, res) => {
         const hashPass = await bcrypt.hash(password, salt);
 
         await sequelize.sync().then(() => {
-            User.create({
+            Profile.create({
                 name,
                 email,
-                password: hashPass,
-                role
-            }).then((newUser) => {
-                 sequelize.sync().then(() => {
-                    Profile.create({
+                role,
+                phone,
+                address,
+            }).then((newProfile) => {
+                console.log("profile created");
+                sequelize.sync().then(() => {
+                    User.create({
                         name,
                         email,
+                        password: hashPass,
                         role,
-                        phone,
-                        address,
-                        UserId : newUser.dataValues.id
-                    }).then((newProfile) => {
-                        console.log(newProfile);
+                        ProfileId: newProfile.dataValues.id
+                    }).then((newUser) => {
+                        console.log('user created')
                         res.send("done")
                     }).catch((error) => {
-                        res.send(error);
+                        res.send(error)
                     })
+                }).catch((error) => {
+                    res.send(error)
                 })
+
             }).catch((error) => {
-                res.send(error)
+                res.send(error);
             })
         })
-        
+
 
     } catch (error) {
         console.error(error);

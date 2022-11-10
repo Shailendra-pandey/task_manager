@@ -1,7 +1,16 @@
+import sequelize from "../model";
+import EmployeeAssign from "../model/employeeAssign.model";
+import Task from "../model/task.model";
+
 const isAdmin = async (req, res, next) => {
-    if(req.role === "admin"){
-        req.msg = 'admin is logged in'
+    if(req.user.role === "admin"){
+        const user = req.user
+        // console.log(JSON.stringify(req.user.userProfile, null, 2))
+        const task = await Task.findAll({where: {givenBy: req.user.id}});
+
+        req.userDetail = {user, task};
     }
+
     next();
 }
 

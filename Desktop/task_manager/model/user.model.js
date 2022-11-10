@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../model';
+import sequelize from '.';
 import Profile from './profile.model';
 
 const User = sequelize.define("User", {
@@ -13,11 +13,13 @@ const User = sequelize.define("User", {
     }
 })
 
-// User.belongsTo(Profile)
-User.hasOne(Profile, {foreignKey: {
-    allowNull: false
-  }})
-// Profile.hasOne(User)
+Profile.hasOne(User, {foreignKey: {
+        allowNull: false
+      }})
+User.belongsTo(Profile)
+// User.hasOne(Profile, {foreignKey: {
+//     allowNull: false
+//   }})
 // Profile.belongsTo(User)
 
 

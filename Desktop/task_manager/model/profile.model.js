@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from 'sequelize';
-import sequelize from '../model';
+import sequelize from '.';
 const User = require('./user.model')
 
 const Profile = sequelize.define("Profile", {
