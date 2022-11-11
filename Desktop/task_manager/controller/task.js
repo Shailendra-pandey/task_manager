@@ -8,11 +8,13 @@ const task = async (req, res, next) => {
 
     const user = await User.findOne({ where: { id: id } });
 
-    // if (user.dataValues.role === "manager") {
-    //     const checkUser = await EmployeeAssign.findOne({ where: { EmployeeId: req.body.EmployeeId, ManagerId: User.dataValues.id } })
-    // }
+    if (user.dataValues.role === "manager") {
+        const checkUser = await EmployeeAssign.findOne({ where: { EmployeeId: req.body.EmployeeId, ManagerId: user.dataValues.id } })
+        if(!checkUser){
+            return res.send('incorrect user');
+        }
 
-    if (user.dataValues.role === 'admin' || user.dataValues.role === "manager") {
+        if(checkUser.dataValues.ManagerId === user.dataValues.id){
         await sequelize.sync().then(() => {
             Task.create({
                 task: req.body.task,
@@ -26,9 +28,25 @@ const task = async (req, res, next) => {
         }).catch((error) => {
             res.send(error);
         })
-    } else {
-        res.send('wrong user');
     }
+
+    }
+
+    if (user.dataValues.role === 'admin') {
+        await sequelize.sync().then(() => {
+            Task.create({
+                task: req.body.task,
+                EmployeeId: req.body.EmployeeId,
+                givenBy: user.dataValues.id
+            }).then(() => {
+                res.send("task assigned");
+            }).catch((error) => {
+                res.send(error)
+            })
+        }).catch((error) => {
+            return res.send(error);
+        })
+    } 
 }
 
 export default task;
