@@ -37,7 +37,7 @@ const employeeAssign = async (req, res, next) => {
         res.send('something went wrong')
     }
     }else{
-        res.send('employee exist')
+        res.send('employee already assigned')
     }
 }
 

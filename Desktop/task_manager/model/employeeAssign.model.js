@@ -7,7 +7,6 @@ const EmployeeAssign = sequelize.define("employeeAssign", {
     EmployeeId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
             model: User,
             key: 'id'

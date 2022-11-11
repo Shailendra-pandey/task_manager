@@ -13,8 +13,6 @@ const loginValidate = async (req, res, next) => {
 
         const userProfile = await User.findByPk(user.dataValues.id, { include: Profile })
 
-        delete userProfile.password;
-
         if (!user) {
             res.send("email is incorrect");
             return;
